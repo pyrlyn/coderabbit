@@ -18,6 +18,8 @@ import urllib.request
 ORG = os.environ.get("ORG", "pyrlyn")
 SELF = os.environ.get("GITHUB_REPOSITORY", f"{ORG}/coderabbit").split("/")[1]
 TOKEN = os.environ["GH_TOKEN"]
+# Repositories the sync must never touch.
+EXCLUDE = {"rtok-net"}
 BRANCH = "chore/sync-coderabbit-config"
 TARGET = ".coderabbit.yaml"
 STRAY = [".coderabbit.yml", ".github/.coderabbit.yaml", ".github/.coderabbit.yml"]
@@ -47,7 +49,8 @@ def repos():
         batch = api("GET", f"/orgs/{ORG}/repos?type=all&per_page=100&page={page}")
         if not batch:
             return
-        yield from (r for r in batch if not r["archived"] and r["name"] != SELF)
+        yield from (r for r in batch if not r["archived"] and r["name"] != SELF
+                    and r["name"] not in EXCLUDE)
         page += 1
 
 
