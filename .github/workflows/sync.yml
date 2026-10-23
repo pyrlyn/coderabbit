@@ -1,0 +1,31 @@
+name: sync
+
+# Syncs the central .coderabbit.yaml into every non-archived pyrlyn repository
+# (PR with auto-merge on protected default branches). Needs secret CODERABBIT_SYNC_TOKEN.
+on:
+  push:
+    branches: [main]
+    paths: [.coderabbit.yaml, scripts/sync.py, .github/workflows/sync.yml]
+  schedule:
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 scripts/sync.py
+        env:
+          GH_TOKEN: ${{ secrets.CODERABBIT_SYNC_TOKEN }}
