@@ -33,6 +33,7 @@ reviews:
       enabled: false
 chat:
   auto_reply: false
+  art: false
   integrations:
     jira:
       usage: disabled
@@ -41,4 +42,3 @@ chat:
 issue_enrichment:
   auto_enrich:
     enabled: false
-  art: false
